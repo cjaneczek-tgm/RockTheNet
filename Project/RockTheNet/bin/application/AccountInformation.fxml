@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="397.0" prefWidth="595.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="29.0" layoutY="28.0" text="Account information">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+      <Label fx:id="aInfoLabel" layoutX="31.0" layoutY="64.0" prefHeight="270.0" prefWidth="538.0" />
+      <Button layoutX="477.0" layoutY="347.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="Close" />
+   </children>
+</Pane>

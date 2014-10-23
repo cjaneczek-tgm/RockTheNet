@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="383.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="32.0" layoutY="33.0" text="Support">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+      <Label fx:id="supportLabel" layoutX="32.0" layoutY="78.0" prefHeight="239.0" prefWidth="540.0" />
+      <Button layoutX="510.0" layoutY="329.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="62.0" text="Close" />
+   </children>
+</Pane>
