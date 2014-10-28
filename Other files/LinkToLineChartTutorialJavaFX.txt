@@ -1,0 +1,3 @@
+Link for using/creating line charts with JavaFX:
+
+http://docs.oracle.com/javafx/2/charts/line-chart.htm
