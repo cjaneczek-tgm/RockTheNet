@@ -3,5 +3,13 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/grammatica-1.5.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="lib/mibble-mibs-20141028.jar"/>
+	<classpathentry kind="lib" path="lib/mibble-parser-20141028.jar"/>
+	<classpathentry kind="lib" path="lib/snmp4j-2.3.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/snmp4j-2.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/snmp6_0.jar"/>
+	<classpathentry kind="lib" path="properties"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
