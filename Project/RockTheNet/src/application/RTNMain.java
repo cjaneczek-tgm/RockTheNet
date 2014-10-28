@@ -1,5 +1,7 @@
 package application;
 
+import org.apache.log4j.Logger;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -7,6 +9,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 
 public class RTNMain extends Application {
+	
+	private static final Logger logger = Logger.getLogger(RTNMain.class);
+	
 	@Override
 	public void start(Stage primaryStage) {
 		try {
@@ -24,6 +29,7 @@ public class RTNMain extends Application {
 	}
 
 	public static void main(String[] args) {
+		logger.info("Starting the application!");
 		launch(args);
 	}
 }
