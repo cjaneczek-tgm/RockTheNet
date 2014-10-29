@@ -3,19 +3,32 @@
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.collections.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="222.0" prefWidth="268.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <Label layoutX="12.0" layoutY="14.0" text="Serveradress:" />
-      <TextField layoutX="114.0" layoutY="9.0" prefHeight="26.0" prefWidth="140.0" />
-      <Button layoutX="12.0" layoutY="188.0" mnemonicParsing="false" text="Connect" />
-      <CheckBox layoutX="12.0" layoutY="154.0" mnemonicParsing="false" text="Save connection properties" />
-      <Label layoutX="12.0" layoutY="87.0" text="SNMP version:" />
-      <ComboBox layoutX="114.0" layoutY="82.0" prefHeight="26.0" prefWidth="140.0" />
-      <Label layoutX="12.0" layoutY="50.0" text="Port:" />
-      <TextField layoutX="115.0" layoutY="46.0" prefHeight="25.0" prefWidth="140.0" />
-      <Label layoutX="12.0" layoutY="123.0" text="Protocol:" />
-      <RadioButton layoutX="115.0" layoutY="123.0" mnemonicParsing="false" text="UDP" />
-      <RadioButton layoutX="212.0" layoutY="123.0" mnemonicParsing="false" text="TCP" />
-   </children>
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="222.0" prefWidth="268.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RTNController">
+	<children>
+		<Label layoutX="12.0" layoutY="14.0" text="Serveradress:" />
+		<TextField fx:id="serverAddressTf" layoutX="114.0" layoutY="9.0" prefHeight="26.0" prefWidth="140.0" />
+		<Button fx:id="bConnect" layoutX="12.0" layoutY="188.0" mnemonicParsing="false" onAction="#createConnectionToDevice" text="Connect" />
+		<CheckBox fx:id="saveConPropertiesCheckBox" layoutX="12.0" layoutY="154.0" mnemonicParsing="false" text="Save connection properties" />
+		<Label layoutX="12.0" layoutY="87.0" text="SNMP version:" />
+		<ComboBox fx:id="snmpComboBox" layoutX="114.0" layoutY="82.0" prefHeight="26.0" prefWidth="140.0" promptText="Select version">
+			<items>
+				<FXCollections fx:factory="observableArrayList">
+					<String fx:value="v.1" />
+					<String fx:value="v.2" />
+					<String fx:value="v.3" />
+				</FXCollections>
+			</items>
+		</ComboBox>
+		<Label layoutX="12.0" layoutY="50.0" text="Port:" />
+		<TextField fx:id="portTf" layoutX="115.0" layoutY="46.0" prefHeight="25.0" prefWidth="140.0" />
+		<Label layoutX="12.0" layoutY="123.0" text="Protocol:" />
+		<RadioButton fx:id="udpRadio" layoutX="115.0" layoutY="123.0" mnemonicParsing="false" text="UDP">
+			<toggleGroup>
+				<ToggleGroup fx:id="radioGroup2" />
+			</toggleGroup>
+		</RadioButton>
+		<RadioButton fx:id="tcpRadio" layoutX="212.0" layoutY="123.0" mnemonicParsing="false" text="TCP" toggleGroup="$radioGroup2" />
+	</children>
 </Pane>
