@@ -14,13 +14,13 @@ import javafx.scene.Scene;
 
 /**
  * 
- * @author Christian Janeczek, Wolfgang Mair
+ * @author Osman Oezsoy, Christian Janeczek, Wolfgang Mair
  * @version 2014-10-29
  */
 public class RTNMain extends Application {
-	
+
 	private static final Logger logger = Logger.getLogger(RTNMain.class);
-	
+
 	@Override
 	public void start(Stage primaryStage) {
 		try {
@@ -43,7 +43,7 @@ public class RTNMain extends Application {
 		logger.info("SNMPv2Reader generated");
 		read2.open();
 		logger.info("Connection started");
-		for(List<String> list : read2.read()){
+		for (List<String> list : read2.read()) {
 			System.out.println(list.toString());
 		}
 		
