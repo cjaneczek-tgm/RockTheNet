@@ -22,7 +22,8 @@ import net.percederberg.mibble.value.ObjectIdentifierValue;
 /**
  * SNMPv2-Implementation
  * 
- * @version 2014-10-23
+ * @author Christian Janeczek, Wolfgang Mair
+ * @version 2014-10-29
  */
 public class SNMPv2Reader implements SNMPReader {
 	private static final Logger logger = Logger.getLogger(RTNMain.class);
@@ -40,8 +41,8 @@ public class SNMPv2Reader implements SNMPReader {
 
 		loader.addDir(file.getParentFile());
 		try {
-			logger.info("MibFile loaded!");
-			return loader.load(file); 
+			logger.info("Loading the MibFile...");
+			return loader.load(file);
 		} catch ( MibLoaderException e) {
 			e.printStackTrace();
 		}

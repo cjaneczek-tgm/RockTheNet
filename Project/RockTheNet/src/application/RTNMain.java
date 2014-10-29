@@ -1,12 +1,7 @@
 package application;
 
-import java.io.File;
 import java.util.List;
-
-import net.percederberg.mibble.Mib;
-
 import org.apache.log4j.Logger;
-
 import engine.network.snmp.SNMPv2Reader;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -14,6 +9,11 @@ import javafx.stage.Stage;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
+/**
+ * 
+ * @author Christian Janeczek, Wolfgang Mair
+ * @version 2014-10-29
+ */
 public class RTNMain extends Application {
 	
 	private static final Logger logger = Logger.getLogger(RTNMain.class);
@@ -43,7 +43,11 @@ public class RTNMain extends Application {
 		for(List<String> list : read2.read()){
 			System.out.println(list.toString());
 		}
-		logger.info("Generated List");
+		logger.info("Finished loading the MibFile!");
+		logger.info("Generated List!");
+		logger.info("Launching up the Graphical-User-Interface...");
+		logger.info("Graphical-User-Interface launched!");
 		launch(args);
+		logger.info("The application was terminated/closed! Bye Bye");
 	}
 }
