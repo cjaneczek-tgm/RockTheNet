@@ -1,3 +1,8 @@
+/api
+/application
+/controller
+/engine
+/img
 /engine
 /application
 *.class
