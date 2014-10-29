@@ -17,7 +17,7 @@ import org.snmp4j.smi.OID;
  */
 public class Monitor implements Stoppable, Runnable {
 
-	private Map<OID,List<Long>> throughput;
+	private Map<OID, List<Long>> throughput;
 
 	private Monitor monitor;
 	
