@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
+import application.RTNMain;
 import net.percederberg.mibble.Mib;
 import net.percederberg.mibble.MibLoader;
 import net.percederberg.mibble.MibLoaderException;
@@ -22,7 +25,7 @@ import net.percederberg.mibble.value.ObjectIdentifierValue;
  * @version 2014-10-23
  */
 public class SNMPv2Reader implements SNMPReader {
-
+	private static final Logger logger = Logger.getLogger(RTNMain.class);
 
 	/**
 	 * A Method which loads a Mib File and returns a Mib Object
@@ -37,6 +40,7 @@ public class SNMPv2Reader implements SNMPReader {
 
 		loader.addDir(file.getParentFile());
 		try {
+			logger.info("MibFile loaded!");
 			return loader.load(file); 
 		} catch ( MibLoaderException e) {
 			e.printStackTrace();
@@ -47,6 +51,7 @@ public class SNMPv2Reader implements SNMPReader {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+		logger.error("MibFile loading error!");
 		return null;
 	}
 
@@ -115,7 +120,7 @@ public class SNMPv2Reader implements SNMPReader {
 	 */
 	@Override
 	public List<List<String>> read() {
-		File file = new File("NETSCREEN-SMI.mib");
+		File file = new File("mib/NS-POLICY.mib");
 		Mib mib = loadMib(file);
 		
 		List<List<String>> list = new ArrayList<List<String>>();

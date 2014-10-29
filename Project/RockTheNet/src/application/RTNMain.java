@@ -1,7 +1,13 @@
 package application;
 
+import java.io.File;
+import java.util.List;
+
+import net.percederberg.mibble.Mib;
+
 import org.apache.log4j.Logger;
 
+import engine.network.snmp.SNMPv2Reader;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -30,6 +36,14 @@ public class RTNMain extends Application {
 
 	public static void main(String[] args) {
 		logger.info("Starting the application!");
+		SNMPv2Reader read2 = new SNMPv2Reader();
+		logger.info("SNMPv2Reader generated");
+		read2.open();
+		logger.info("Connection started");
+		for(List<String> list : read2.read()){
+			System.out.println(list.toString());
+		}
+		logger.info("Generated List");
 		launch(args);
 	}
 }
