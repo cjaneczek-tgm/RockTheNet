@@ -1,7 +1,10 @@
 package application;
 
 import java.util.List;
+
 import org.apache.log4j.Logger;
+import org.snmp4j.smi.OID;
+
 import engine.network.snmp.SNMPv2Reader;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -36,17 +39,14 @@ public class RTNMain extends Application {
 
 	public static void main(String[] args) {
 		logger.info("Starting the application!");
-		SNMPv2Reader read2 = new SNMPv2Reader();
+		SNMPv2Reader read2 = new SNMPv2Reader("udp:10.0.100.10/161");
 		logger.info("SNMPv2Reader generated");
 		read2.open();
 		logger.info("Connection started");
 		for(List<String> list : read2.read()){
 			System.out.println(list.toString());
 		}
-		logger.info("Finished loading the MibFile!");
-		logger.info("Generated List!");
-		logger.info("Launching up the Graphical-User-Interface...");
-		logger.info("Graphical-User-Interface launched!");
+		
 		launch(args);
 		logger.info("The application was terminated/closed! Bye Bye");
 	}
