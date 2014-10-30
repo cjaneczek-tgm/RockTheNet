@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="lib/snmp6_0.jar"/>
 	<classpathentry kind="lib" path="properties"/>
 	<classpathentry kind="lib" path="mib"/>
+	<classpathentry kind="lib" path="lib/junit-4.10.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
