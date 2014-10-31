@@ -51,7 +51,7 @@ public class SNMPv2Reader implements SNMPReader {
 	private String community;	
 	private int snmpVersion = SnmpConstants.version2c;
 	private final String port = "161";
-	private String readWith = "udp";
+	private String protocol = "udp";
 	private Address targetAddress;
 	private TransportMapping<? extends Address> transport;
 	private Snmp snmp;
@@ -66,7 +66,7 @@ public class SNMPv2Reader implements SNMPReader {
 	 */
 	public SNMPv2Reader(String firewallname, File mibfile, String url, String community, String connectWith) {
 		this.community = community;
-		this.readWith = connectWith;
+		this.protocol = connectWith;
 		this.url = url;
 		policytypes = new LinkedList<String>();
 	}
@@ -78,7 +78,7 @@ public class SNMPv2Reader implements SNMPReader {
 		try {
 			logger.info("Preparing connection ...");
 			//Genarte an Address to read
-			targetAddress = GenericAddress.parse(readWith + ":" + url + "/" + port);
+			targetAddress = GenericAddress.parse(protocol + ":" + url + "/" + port);
 			transport = new DefaultUdpTransportMapping();
 			snmp = new Snmp(transport);
 			//setting up target
@@ -99,7 +99,8 @@ public class SNMPv2Reader implements SNMPReader {
 	/**
 	 * Start SNMP-Communication
 	 */
-	private void start() {
+	@Override
+	public void open() {
 		logger.info("Starting to listen ...");
 		try {
 			snmp.listen();
@@ -109,9 +110,10 @@ public class SNMPv2Reader implements SNMPReader {
 	}
 
 	/**
-	 * Stop SNMP-Communication
+	 * Method which closes the current snmpv2 Object
 	 */
-	private void stop() {
+	@Override
+	public void close() {
 		logger.info("Closing connection ...");
 		try {
 			snmp.close();
@@ -190,7 +192,7 @@ public class SNMPv2Reader implements SNMPReader {
 		
 		List<PolicyEntry> list = null;
 		setup();
-		start();
+		open();
 		//Read from Settings PolicyId
 		settings = new Settings();
 		strOID = settings.getOid();
@@ -294,7 +296,7 @@ public class SNMPv2Reader implements SNMPReader {
 				} i++;
 			}
 		} 
-		stop();
+		close();
 		return list;
 	} 
 
@@ -305,7 +307,7 @@ public class SNMPv2Reader implements SNMPReader {
 	public synchronized int getMonBytesSec(int index) {
 		int value = -1;
 		setup();
-		start();
+		open();
 		//Read from Settings PolicyId
 		settings = new Settings();
 		strOID = settings.getbytePerSecond() + "." + index + ".0";
@@ -322,7 +324,7 @@ public class SNMPv2Reader implements SNMPReader {
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
-		stop();
+		close();
 		return value;
 	}
 
@@ -416,24 +418,6 @@ public class SNMPv2Reader implements SNMPReader {
 			}
 		}
 		return null;
-	}
-
-
-	/**
-	 * A Method which opens a connection
-	 */
-	@Override
-	public void open() {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * Method which closes the current snmpv2 Object
-	 */
-	@Override
-	public void close() {
-
 	}
 
 	/**
