@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.snmp4j.smi.OID;
 
+import controller.RTNController;
 import engine.network.PolicyEntry;
 import engine.network.snmp.SNMPv2Reader;
 import javafx.application.Application;
@@ -49,13 +50,16 @@ public class RTNMain extends Application {
 		
 		for (PolicyEntry pol : pList) {
 			
-			System.out.println("OID="+pol.getCurrentOid() +", Name="+ pol.getName());
+			System.out.println("OID="+pol.getCurrentOid() +", Name="+ pol.getName() +", Zone="+ pol.getZone()+", Service="+pol.getService());
 		}
-		System.out.println(""+read2.getMonBytesSec(79));
 		
-//		logger.info("Connection started");
-//		for (List<String> list : read2.read()) {
-//			System.out.println(list.toString());
+//		logger.info("Starting readMethod");
+//		
+//		for(List<String> list : read2.read()){
+//			for(String value : list){
+//				System.out.print(value+", ");
+//			}
+//			System.out.println();
 //		}
 		
 		launch(args);

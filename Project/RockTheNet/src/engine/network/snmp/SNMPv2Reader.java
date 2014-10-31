@@ -219,12 +219,76 @@ public class SNMPv2Reader implements SNMPReader {
 					}
 					if(i==0) {
 						entry = new PolicyEntry();
-						entry.addName(value.getVariable().toString());
+						entry.setName(value.getVariable().toString());
 						entry.setCurrentOid(value.getOid().toString());
 						list.add(k, entry);
 					} else {
 						entry = list.get(k);
-						entry.addName(value.getVariable().toString());
+						entry.setName(value.getVariable().toString());
+						list.set(k, entry);
+					} k++; //System.out.println(value.getOid());
+				} i++;
+			}
+		} 
+		strOID = settings.getOid3();
+		for(TreeEvent event : subtree(strOID, maxrep)) {
+			if (event != null) {
+				if (event.isError()) {
+					logger.info(event.getErrorMessage());
+				}
+				VariableBinding[] values = event.getVariableBindings();
+				if (values == null) {
+					logger.info("No result returned. Values null");
+				} else if (values.length == 0) {
+					logger.info("No result returned. 0 Values");
+				}
+				PolicyEntry entry = null;
+				k = 0;
+				for (VariableBinding value : values) {
+					if(k == 0) {
+						String tempoid = String.valueOf(value.getOid());
+						policytypes.add(tempoid.subSequence(0, tempoid.length()-4).toString());
+					}
+					if(i==0) {
+						entry = new PolicyEntry();
+						entry.setZone(value.getVariable().toString());
+						entry.setCurrentOid(value.getOid().toString());
+						list.add(k, entry);
+					} else {
+						entry = list.get(k);
+						entry.setZone(value.getVariable().toString());
+						list.set(k, entry);
+					} k++; //System.out.println(value.getOid());
+				} i++;
+			}
+		} 
+		strOID = settings.getOid4();
+		for(TreeEvent event : subtree(strOID, maxrep)) {
+			if (event != null) {
+				if (event.isError()) {
+					logger.info(event.getErrorMessage());
+				}
+				VariableBinding[] values = event.getVariableBindings();
+				if (values == null) {
+					logger.info("No result returned. Values null");
+				} else if (values.length == 0) {
+					logger.info("No result returned. 0 Values");
+				}
+				PolicyEntry entry = null;
+				k = 0;
+				for (VariableBinding value : values) {
+					if(k == 0) {
+						String tempoid = String.valueOf(value.getOid());
+						policytypes.add(tempoid.subSequence(0, tempoid.length()-4).toString());
+					}
+					if(i==0) {
+						entry = new PolicyEntry();
+						entry.setService(value.getVariable().toString());
+						entry.setCurrentOid(value.getOid().toString());
+						list.add(k, entry);
+					} else {
+						entry = list.get(k);
+						entry.setService(value.getVariable().toString());
 						list.set(k, entry);
 					} k++; //System.out.println(value.getOid());
 				} i++;
