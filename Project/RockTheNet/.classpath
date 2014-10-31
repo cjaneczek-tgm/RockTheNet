@@ -13,5 +13,11 @@
 	<classpathentry kind="lib" path="properties"/>
 	<classpathentry kind="lib" path="mib"/>
 	<classpathentry kind="lib" path="lib/junit-4.10.jar"/>
+	<classpathentry kind="lib" path="lib/ganymed-ssh2-build210.jar"/>
+	<classpathentry kind="lib" path="lib/jsch-0.1.51.jar"/>
+	<classpathentry kind="lib" path="lib/sshj-0.8.1-examples.zip"/>
+	<classpathentry kind="lib" path="lib/sshj-0.8.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/sshj-0.8.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/sshj-0.8.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
