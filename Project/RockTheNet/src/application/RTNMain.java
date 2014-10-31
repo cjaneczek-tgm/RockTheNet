@@ -49,9 +49,9 @@ public class RTNMain extends Application {
 		
 		for (PolicyEntry pol : pList) {
 			
-			System.out.println("OID="+pol.getCurrentOid() +", Type="+pol.getType()+", Value="+ pol.getValue());
+			System.out.println("OID="+pol.getCurrentOid() +", Name="+ pol.getName());
 		}
-		System.out.println(""+read2.getMonBytesSec(78));
+		System.out.println(""+read2.getMonBytesSec(79));
 		
 //		logger.info("Connection started");
 //		for (List<String> list : read2.read()) {

@@ -1,27 +1,48 @@
 package engine.network;
 
-import net.percederberg.mibble.MibSymbol;
-import net.percederberg.mibble.MibValue;
+import java.util.ArrayList;
 
 public class PolicyEntry {
 	
-	private String value;
+	private String name;
 	private String currentOid;
-	private String type;
+	private String zone;
+	private String service;
 	
-	public PolicyEntry(){
-		
-	}
-
-	
-	public String getType() {
-		return type;
+	public String getName() {
+		return name;
 	}
 
 
-	public void setType(String type) {
-		this.type = type;
+
+	public void setName(String name) {
+		this.name = name;
 	}
+
+
+
+	public String getZone() {
+		return zone;
+	}
+
+
+
+	public void setZone(String zone) {
+		this.zone = zone;
+	}
+
+
+
+	public String getService() {
+		return service;
+	}
+
+
+
+	public void setService(String service) {
+		this.service = service;
+	}
+
 
 
 	public String getCurrentOid() {
@@ -36,18 +57,27 @@ public class PolicyEntry {
 
 
 
-	public void addValue(String value){
-		this.value = value;
+	public void addName(String name){
+		this.name = name;
 	}
 
 	public String getValue() {
-		return value;
+		return name;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public void setValue(String name) {
+		this.name = name;
 	}
 
-	
+	public ArrayList<String> getList(){
+		ArrayList<String> list = new ArrayList<String>();
+		
+		list.add(this.currentOid);
+		list.add(this.name);
+		list.add(this.zone);
+		list.add(this.service);
+		
+		return list;
+	}
 	
 }
