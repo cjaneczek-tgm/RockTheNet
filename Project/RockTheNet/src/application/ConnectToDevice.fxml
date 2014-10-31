@@ -24,7 +24,7 @@
 		<Label layoutX="12.0" layoutY="50.0" text="Port:" />
 		<TextField fx:id="portTf" layoutX="115.0" layoutY="46.0" prefHeight="25.0" prefWidth="140.0" />
 		<Label layoutX="12.0" layoutY="123.0" text="Protocol:" />
-		<RadioButton fx:id="udpRadio" layoutX="115.0" layoutY="123.0" mnemonicParsing="false" text="UDP">
+		<RadioButton fx:id="udpRadio" layoutX="115.0" layoutY="123.0" mnemonicParsing="false" selected="true" text="UDP">
 			<toggleGroup>
 				<ToggleGroup fx:id="radioGroup2" />
 			</toggleGroup>

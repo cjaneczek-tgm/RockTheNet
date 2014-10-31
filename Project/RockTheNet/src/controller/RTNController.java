@@ -1,14 +1,10 @@
 package controller;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
-import engine.network.snmp.SNMPv2Reader;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import application.LineChartIntervalRefresher;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -119,29 +115,40 @@ public class RTNController implements Initializable {
 	private TextField serviceTf;
 
 	@FXML
-	private TextField zoneTf;
+	private NumberAxis xAxis = new NumberAxis();
 
 	@FXML
-	final NumberAxis xAxis = new NumberAxis();
+	private NumberAxis yAxis = new NumberAxis();
 
 	@FXML
-	final NumberAxis yAxis = new NumberAxis();
-
-	@FXML
-	final LineChart<Number, Number> lineChart = new LineChart<Number, Number>(
+	private LineChart<Number, Number> lineChart = new LineChart<Number, Number>(
 			xAxis, yAxis);
 
-	private XYChart.Series series;
+	XYChart.Series series;
+	
+	private LineChartIntervalRefresher lcirf;
+
+	public RTNController() {
+		// setting the title of the line chart
+		this.lineChart.setTitle("Through-put");
+		
+		this.series = new XYChart.Series();
+        this.series.setName("Transaction rate");
+
+		// initializing the refresh thread for the line chart
+		this.lcirf = new LineChartIntervalRefresher(this);
+
+		Thread th = new Thread(this.lcirf);
+		th.start();
+	}
 
 	/**
 	 * 
 	 */
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		// setting the title of the line chart
-		lineChart.setTitle("Through-put");
 	}
-
+	
 	/**
 	 * 
 	 * @param event
@@ -249,15 +256,8 @@ public class RTNController implements Initializable {
 	 */
 	@FXML
 	public void refreshInterval(ActionEvent event) throws IOException {
-		refreshLineChart();
-	}
-
-	/**
-	 * 
-	 */
-	@FXML
-	public void refreshLineChart() {
-		
+		this.lcirf
+				.setSleepTime(Integer.parseInt(this.refreshTf.getText()) * 1000);
 	}
 
 	/**
@@ -308,5 +308,57 @@ public class RTNController implements Initializable {
 	@FXML
 	public void signInUser(ActionEvent event) throws IOException {
 
+	}
+
+	/**
+	 * 
+	 * @param event
+	 * @throws IOException
+	 */
+	@FXML
+	public void setByteSelected(ActionEvent event) throws IOException {
+		this.lcirf.setByteSelected(true);
+		this.lcirf.setKiloByteSelected(false);
+		this.lcirf.setMegaByteSelected(false);
+	}
+
+	/**
+	 * 
+	 * @param event
+	 * @throws IOException
+	 */
+	@FXML
+	public void setKiloByteSelected(ActionEvent event) throws IOException {
+		this.lcirf.setByteSelected(false);
+		this.lcirf.setKiloByteSelected(true);
+		this.lcirf.setMegaByteSelected(false);
+	}
+
+	/**
+	 * 
+	 * @param event
+	 * @throws IOException
+	 */
+	@FXML
+	public void setMegaByteSelected(ActionEvent event) throws IOException {
+		this.lcirf.setByteSelected(false);
+		this.lcirf.setKiloByteSelected(false);
+		this.lcirf.setMegaByteSelected(true);
+	}
+
+	public LineChart<Number, Number> getLineChart() {
+		return lineChart;
+	}
+
+	public void setLineChart(LineChart<Number, Number> lineChart) {
+		this.lineChart = lineChart;
+	}
+
+	public XYChart.Series getSeries() {
+		return series;
+	}
+
+	public void setSeries(XYChart.Series series) {
+		this.series = series;
 	}
 }
