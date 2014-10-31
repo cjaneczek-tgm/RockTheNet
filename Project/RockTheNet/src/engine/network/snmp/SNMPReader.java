@@ -11,12 +11,12 @@ import engine.network.PolicyReader;
 public interface SNMPReader extends PolicyReader {
 
 	/**
-	 * Opens the SNMP-whatever //TODO: Fix this doc
+	 * Opens the SNMP
 	 */
 	public void open();
 
 	/**
-	 * Closes the SNMP-whatever //TODO: Fix this doc
+	 * Closes the SNMP
 	 */
 	public void close();
 }
