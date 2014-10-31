@@ -46,21 +46,15 @@ public class RTNMain extends Application {
 		List<PolicyEntry> pList;
 		SNMPv2Reader read2 = new SNMPv2Reader("Firewall", new File("mib/NS-POLICY.mib"), "10.0.100.10", "5xHIT", "udp");
 		logger.info("SNMPv2Reader generated");
-		pList = read2.getPolicyEntries();
 		
-		for (PolicyEntry pol : pList) {
-			
-			System.out.println("OID="+pol.getCurrentOid() +", Name="+ pol.getName() +", Zone="+ pol.getZone()+", Service="+pol.getService());
+		logger.info("Starting readMethod");
+		
+		for(List<String> list : read2.read()){
+			for(String value : list){
+				System.out.print(value+", ");
+			}
+			System.out.println();
 		}
-		
-//		logger.info("Starting readMethod");
-//		
-//		for(List<String> list : read2.read()){
-//			for(String value : list){
-//				System.out.print(value+", ");
-//			}
-//			System.out.println();
-//		}
 		
 		launch(args);
 		logger.info("The application was terminated/closed! Bye Bye");

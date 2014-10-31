@@ -72,7 +72,7 @@ public class SNMPv2Reader implements SNMPReader {
 	}
 
 	/**
-	 * Setup everthing general for SNMP-Communication
+	 * A method which prepares everything needed for a snmp connection
 	 */
 	private void setup() {
 		try {
@@ -97,7 +97,7 @@ public class SNMPv2Reader implements SNMPReader {
 	}
 
 	/**
-	 * Start SNMP-Communication
+	 * A method wich starts the listen method in the SNMP object
 	 */
 	@Override
 	public void open() {
@@ -123,9 +123,9 @@ public class SNMPv2Reader implements SNMPReader {
 	}
 
 	/**
-	 * Return a List of TreeEvents read with GETBULK internly,
-	 * the VariableBindings per TreeEvent are random, but mostly 10
-	 * @param tempoid The OID to Bulk
+	 * Return a List of TreeEvents which is read from the subtree of a OID
+	 * 
+	 * @param tempoid The OID to get the subtree from
 	 * @return a List of TreeEvents
 	 */
 	private List<TreeEvent> subtree(String tempoid) {
@@ -140,10 +140,10 @@ public class SNMPv2Reader implements SNMPReader {
 	}
 
 	/**
-	 * Return a List of TreeEvents read with GETBULK internly,
-	 * the VariableBindings per TreeEvent are maxrep
-	 * @param tempoid The OID to Bulk
-	 * @param maxrep Count of VariableBindings per TreeEvent
+	 * Return a List of TreeEvents which is read from the subtree of a OID with an max
+	 * 
+	 * @param tempoid The OID to get the subtree from
+	 * @param maxrep The amount of VariableBindings per TreeEvent
 	 * @return a List of TreeEvents
 	 */
 	private List<TreeEvent> subtree(String tempoid, int maxrep) {
@@ -159,15 +159,15 @@ public class SNMPv2Reader implements SNMPReader {
 	}
 
 	/**
-	 * Count the Policies, 
-	 * over getting the IDs with subtree an count them
-	 * @param oidSubtreePolicyIDs The Root-OID of the PolicyIDs
+	 * Counting the Policies
+	 * 
+	 * @param oid The Root-OID
 	 * @return the count of Policies
 	 */
-	public int countPolicies(String oidSubtreePolicyIDs) {
+	private int countPolicies(String oid) {
 		logger.info("Counting started!");
 		int count = 0;
-		List<TreeEvent> events = subtree(oidSubtreePolicyIDs);
+		List<TreeEvent> events = subtree(oid);
 		if(events==null) {
 			logger.error("Subtree null");
 		} else {
@@ -184,9 +184,11 @@ public class SNMPv2Reader implements SNMPReader {
 	}
 
 	/**
-	 * @see mim.firewall.FirewallReader#getPolicyEntries()
+	 * Reads all the Values we need for the policies
+	 * 
+	 * @return   A list with policy entries
 	 */
-	public List<PolicyEntry> getPolicyEntries() {
+	private List<PolicyEntry> getPolicyEntries() {
 		
 		logger.info("Starting to read Policies ...");
 		
@@ -260,7 +262,7 @@ public class SNMPv2Reader implements SNMPReader {
 						entry = list.get(k);
 						entry.setZone(value.getVariable().toString());
 						list.set(k, entry);
-					} k++; //System.out.println(value.getOid());
+					} k++;
 				} i++;
 			}
 		} 
@@ -292,7 +294,7 @@ public class SNMPv2Reader implements SNMPReader {
 						entry = list.get(k);
 						entry.setService(value.getVariable().toString());
 						list.set(k, entry);
-					} k++; //System.out.println(value.getOid());
+					} k++;
 				} i++;
 			}
 		} 
@@ -301,9 +303,11 @@ public class SNMPv2Reader implements SNMPReader {
 	} 
 
 	/**
-	 * @see mim.firewall.FirewallReader#getMonBytesSec(int index)
-	 * If the number can not been read the return is -1
+	 * 
+	 * @param index
+	 * @return
 	 */
+	@Override
 	public synchronized int getMonBytesSec(int index) {
 		int value = -1;
 		setup();
@@ -336,7 +340,7 @@ public class SNMPv2Reader implements SNMPReader {
 	 * @param OID
 	 * @return
 	 */
-	public List<String> getPolicyTypes(){
+	private List<String> getPolicyTypes(){
 		Mib mib = this.loadMib(new File("mib/NS-POLICY.mib"));
 		ArrayList<String> list = new ArrayList<String>();
 		Iterator   iter = mib.getAllSymbols().iterator();
@@ -359,7 +363,7 @@ public class SNMPv2Reader implements SNMPReader {
 	 * @param file A File Object which contains the path of the mibFile
 	 * @return   A Mib Object which contains useful methods for snmp
 	 */
-	public Mib loadMib(File file){
+	private Mib loadMib(File file){
 
 		MibLoader  loader = new MibLoader();
 
@@ -385,7 +389,7 @@ public class SNMPv2Reader implements SNMPReader {
 	 * @param mib The Mib Object which was generated through the mib file
 	 * @return   A Hashmap with symbolname as key and its value as value
 	 */
-	public HashMap extractOids(Mib mib) {
+	private HashMap extractOids(Mib mib) {
 		HashMap    map = new HashMap();
 		Iterator   iter = mib.getAllSymbols().iterator();
 		MibSymbol  symbol;
@@ -408,7 +412,7 @@ public class SNMPv2Reader implements SNMPReader {
 	 * @param symbol
 	 * @return
 	 */
-	public ObjectIdentifierValue extractOid(MibSymbol symbol) {
+	private ObjectIdentifierValue extractOid(MibSymbol symbol) {
 		MibValue  value;
 
 		if (symbol instanceof MibValueSymbol) {
