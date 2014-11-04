@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,26 +27,24 @@ import org.snmp4j.util.TreeUtils;
 
 import application.RTNMain;
 import engine.network.PolicyEntry;
-import engine.network.Settings;
 import net.percederberg.mibble.Mib;
 import net.percederberg.mibble.MibLoader;
 import net.percederberg.mibble.MibLoaderException;
 import net.percederberg.mibble.MibSymbol;
 import net.percederberg.mibble.MibValue;
-import net.percederberg.mibble.MibValueSymbol;
-import net.percederberg.mibble.value.ObjectIdentifierValue;
 
 /**
- * SNMPv2-Implementation
- * 
- * @version 2014-10-23
+ * A class which provides methods to connect to the firewall and read the firewall rules
+ * with snmpv2
+ * @author Wolfgang Mair
+ * @version 2014-10-31
  */
 public class SNMPv2Reader implements SNMPReader {
 
 	private static final Logger logger = Logger.getLogger(RTNMain.class);
 
 	private String url;
-	private String strOID;
+	private String textOID;
 	private String community;	
 	private int snmpVersion = SnmpConstants.version2c;
 	private final String port = "161";
@@ -57,8 +54,8 @@ public class SNMPv2Reader implements SNMPReader {
 	private Snmp snmp;
 	private CommunityTarget target;
 	private TreeUtils treeUtils;
-	private Settings settings;
 	private List<String> policytypes = new LinkedList<String>();
+	private File mibfile;
 
 
 	/**
@@ -68,20 +65,22 @@ public class SNMPv2Reader implements SNMPReader {
 		this.community = community;
 		this.protocol = connectWith;
 		this.url = url;
+		this.mibfile = mibfile;
 		policytypes = new LinkedList<String>();
 	}
 
 	/**
-	 * A method which prepares everything needed for a snmp connection
+	 * A method which prepares a snmp connection with snmpv2
 	 */
 	private void setup() {
 		try {
-			logger.info("Preparing connection ...");
-			//Genarte an Address to read
+			logger.info("Preparing the connection");
+			//Building the address to read
 			targetAddress = GenericAddress.parse(protocol + ":" + url + "/" + port);
 			transport = new DefaultUdpTransportMapping();
 			snmp = new Snmp(transport);
-			//setting up target
+			
+			//generating the target
 			target = new CommunityTarget();
 			target.setCommunity(new OctetString(community));
 			target.setAddress(targetAddress);
@@ -89,23 +88,26 @@ public class SNMPv2Reader implements SNMPReader {
 			target.setTimeout(2000);
 			target.setVersion(snmpVersion);
 			treeUtils = new TreeUtils(snmp, new DefaultPDUFactory());
-		} catch (IOException e) {
-			logger.error(e.getMessage() + "\n" + e.getStackTrace().toString());
-		} catch (NullPointerException e) {
-			logger.error(e.getMessage() + "\n" + e.getStackTrace().toString());
+		}
+		catch (IOException e) {
+			logger.error(e.getStackTrace().toString());
+		} 
+		catch (NullPointerException e) {
+			logger.error(e.getStackTrace().toString());
 		}
 	}
 
 	/**
-	 * A method wich starts the listen method in the SNMP object
+	 * A method which starts the listen method in the SNMP object
 	 */
 	@Override
 	public void open() {
-		logger.info("Starting to listen ...");
+		logger.info("Starting to listen");
 		try {
 			snmp.listen();
+			logger.info("Is listening");
 		} catch (IOException e) {
-			logger.error(e.getMessage() + "\n" + e.getStackTrace().toString());
+			logger.error(e.getStackTrace().toString());
 		}
 	}
 
@@ -114,28 +116,12 @@ public class SNMPv2Reader implements SNMPReader {
 	 */
 	@Override
 	public void close() {
-		logger.info("Closing connection ...");
+		logger.info("Closing the connection");
 		try {
 			snmp.close();
+			logger.info("The connection is closed");
 		} catch (IOException e) {
-			logger.error(e.getMessage() + "\n" + e.getStackTrace().toString());
-		}
-	}
-
-	/**
-	 * Return a List of TreeEvents which is read from the subtree of a OID
-	 * 
-	 * @param tempoid The OID to get the subtree from
-	 * @return a List of TreeEvents
-	 */
-	private List<TreeEvent> subtree(String tempoid) {
-		//read Subtree from the given OID
-		if(treeUtils != null && target != null) {
-			List<TreeEvent> subtree = treeUtils.getSubtree(target, new OID(tempoid));
-			return subtree;
-		} else {
-			logger.error("TreeUtils or Target null");
-			return null;
+			logger.error(e.getStackTrace().toString());
 		}
 	}
 
@@ -149,7 +135,8 @@ public class SNMPv2Reader implements SNMPReader {
 	private List<TreeEvent> subtree(String tempoid, int maxrep) {
 		List<TreeEvent> subtree = null;
 		if(treeUtils != null && target != null) {
-			treeUtils.setMaxRepetitions(maxrep);
+			if(maxrep > 0)
+				treeUtils.setMaxRepetitions(maxrep);
 			subtree = treeUtils.getSubtree(target, new OID(tempoid));
 			return subtree;
 		} else {
@@ -165,9 +152,9 @@ public class SNMPv2Reader implements SNMPReader {
 	 * @return the count of Policies
 	 */
 	private int countPolicies(String oid) {
-		logger.info("Counting started!");
+		logger.info("Starting to count");
 		int count = 0;
-		List<TreeEvent> events = subtree(oid);
+		List<TreeEvent> events = subtree(oid, -1);
 		if(events==null) {
 			logger.error("Subtree null");
 		} else {
@@ -180,6 +167,7 @@ public class SNMPv2Reader implements SNMPReader {
 				}
 			}
 		}
+		logger.info("Finished counting");
 		return count;
 	}
 
@@ -190,29 +178,31 @@ public class SNMPv2Reader implements SNMPReader {
 	 */
 	private List<PolicyEntry> getPolicyEntries() {
 		
-		logger.info("Starting to read Policies ...");
+		logger.info("Starting to read the Policies");
 		
 		List<PolicyEntry> list = null;
 		setup();
 		open();
 		//Read from Settings PolicyId
-		settings = new Settings();
-		strOID = settings.getOid();
-		int maxrep = countPolicies(strOID);
+		textOID = ".1.3.6.1.4.1.3224.10.1.1";
+		int maxrep = countPolicies(textOID);
 		int i = 0, k = 0;
 		list = new LinkedList<PolicyEntry>();
+		
 		//Read from Settings Policy
-		strOID = settings.getOid2();
-		for(TreeEvent event : subtree(strOID, maxrep)) {
+		textOID = ".1.3.6.1.4.1.3224.10.1.1.24";
+		for(TreeEvent event : subtree(textOID, maxrep)) {
 			if (event != null) {
 				if (event.isError()) {
 					logger.info(event.getErrorMessage());
 				}
 				VariableBinding[] values = event.getVariableBindings();
 				if (values == null) {
-					logger.info("No result returned. Values null");
-				} else if (values.length == 0) {
-					logger.info("No result returned. 0 Values");
+					logger.info("Values are null");
+				} 
+				else 
+					if (values.length == 0) {
+					logger.info("No Values found");
 				}
 				PolicyEntry entry = null;
 				k = 0;
@@ -230,21 +220,24 @@ public class SNMPv2Reader implements SNMPReader {
 						entry = list.get(k);
 						entry.setName(value.getVariable().toString());
 						list.set(k, entry);
-					} k++; //System.out.println(value.getOid());
+					} k++;
 				} i++;
 			}
 		} 
-		strOID = settings.getOid3();
-		for(TreeEvent event : subtree(strOID, maxrep)) {
+		
+		textOID = ".1.3.6.1.4.1.3224.10.1.1.3";
+		for(TreeEvent event : subtree(textOID, maxrep)) {
 			if (event != null) {
 				if (event.isError()) {
 					logger.info(event.getErrorMessage());
 				}
 				VariableBinding[] values = event.getVariableBindings();
 				if (values == null) {
-					logger.info("No result returned. Values null");
-				} else if (values.length == 0) {
-					logger.info("No result returned. 0 Values");
+					logger.info("Values are null");
+				} 
+				else 
+					if (values.length == 0) {
+					logger.info("No Values found");
 				}
 				PolicyEntry entry = null;
 				k = 0;
@@ -266,17 +259,20 @@ public class SNMPv2Reader implements SNMPReader {
 				} i++;
 			}
 		} 
-		strOID = settings.getOid4();
-		for(TreeEvent event : subtree(strOID, maxrep)) {
+		
+		textOID = ".1.3.6.1.4.1.3224.10.1.1.25";
+		for(TreeEvent event : subtree(textOID, maxrep)) {
 			if (event != null) {
 				if (event.isError()) {
 					logger.info(event.getErrorMessage());
 				}
 				VariableBinding[] values = event.getVariableBindings();
 				if (values == null) {
-					logger.info("No result returned. Values null");
-				} else if (values.length == 0) {
-					logger.info("No result returned. 0 Values");
+					logger.info("Values are null");
+				} 
+				else 
+					if (values.length == 0) {
+					logger.info("No Values found");
 				}
 				PolicyEntry entry = null;
 				k = 0;
@@ -299,35 +295,43 @@ public class SNMPv2Reader implements SNMPReader {
 			}
 		} 
 		close();
+		logger.info("Finished reading the Policies");
 		return list;
 	} 
 
 	/**
+	 * A Method which reads the bytes per second of an OID
 	 * 
-	 * @param index
-	 * @return
+	 * @param index The last specifing OID-branch number of the policy
+	 * @return   The bytes per second
 	 */
 	@Override
 	public synchronized int getMonBytesSec(int index) {
-		int value = -1;
+		int value = 0;
+		//Preparing connection
 		setup();
+		//Listening to connection
 		open();
+		
 		//Read from Settings PolicyId
-		settings = new Settings();
-		strOID = settings.getbytePerSecond() + "." + index + ".0";
-		//SNMP stuff
+		textOID = ".1.3.6.1.4.1.3224.10.2.1.6."+index+".0";
 		PDU pdu = new PDU();
-		pdu.addOID(new VariableBinding(new OID(strOID)));
+		pdu.addOID(new VariableBinding(new OID(textOID)));
 		pdu.setType(PDU.GET);
-		pdu.setMaxRepetitions(10);
+		pdu.setMaxRepetitions(5);
 		ResponseEvent response;
+		
 		try {
 			response = snmp.send(pdu, target);
 			PDU pduresponse = response.getResponse();
-			for(VariableBinding vb : pduresponse.getVariableBindings()) {value = vb.getVariable().toInt();}
-		} catch (IOException e) {
+			for(VariableBinding vb : pduresponse.getVariableBindings()) {
+				value = vb.getVariable().toInt();
+			}
+		}
+		catch (IOException e) {
 			logger.error(e.getMessage());
 		}
+		
 		close();
 		return value;
 	}
@@ -337,11 +341,10 @@ public class SNMPv2Reader implements SNMPReader {
 	/**
 	 * A Method which returns a list with all Policytypes of a certain
 	 * 
-	 * @param OID
-	 * @return
+	 * @return   Eine Liste mit den OIDs der Policytypen
 	 */
 	private List<String> getPolicyTypes(){
-		Mib mib = this.loadMib(new File("mib/NS-POLICY.mib"));
+		Mib mib = this.loadMib(mibfile);
 		ArrayList<String> list = new ArrayList<String>();
 		Iterator   iter = mib.getAllSymbols().iterator();
 		MibSymbol  symbol;
@@ -378,48 +381,6 @@ public class SNMPv2Reader implements SNMPReader {
 		}
 		catch (IOException e) {
 			e.printStackTrace();
-		}
-		return null;
-	}
-
-
-	/**
-	 * A Method which generates a HashMap with the symbolname as key and its value as value
-	 * 
-	 * @param mib The Mib Object which was generated through the mib file
-	 * @return   A Hashmap with symbolname as key and its value as value
-	 */
-	private HashMap extractOids(Mib mib) {
-		HashMap    map = new HashMap();
-		Iterator   iter = mib.getAllSymbols().iterator();
-		MibSymbol  symbol;
-		MibValue   value;
-
-		while (iter.hasNext()) {
-			symbol = (MibSymbol) iter.next();
-			value = extractOid(symbol);
-			if (value != null) {
-				map.put(symbol.getName(), value);
-			}
-		}
-		return map;
-	}
-
-	/**
-	 * A Method which takes a MibSymbol and extracts a ObjectidentifierValue
-	 *from it if MibSymbol is in the instance of MibValueSymbol
-	 * 
-	 * @param symbol
-	 * @return
-	 */
-	private ObjectIdentifierValue extractOid(MibSymbol symbol) {
-		MibValue  value;
-
-		if (symbol instanceof MibValueSymbol) {
-			value = ((MibValueSymbol) symbol).getValue();
-			if (value instanceof ObjectIdentifierValue) {
-				return (ObjectIdentifierValue) value;
-			}
 		}
 		return null;
 	}

@@ -1,15 +1,13 @@
 package application;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.snmp4j.smi.OID;
 
-import controller.RTNController;
-import engine.network.PolicyEntry;
+import engine.network.snmp.SNMPReader;
 import engine.network.snmp.SNMPv2Reader;
+import engine.network.snmp.SNMPv3Reader;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -19,7 +17,7 @@ import javafx.scene.Scene;
 /**
  * 
  * @author Osman Oezsoy, Christian Janeczek, Wolfgang Mair
- * @version 2014-10-29
+ * @version 2014-10-31
  */
 public class RTNMain extends Application {
 
@@ -41,12 +39,15 @@ public class RTNMain extends Application {
 		}
 	}
 
+	/**
+	 * Die main die einen SNMPv2Reader startet und die GUI ausführt
+	 * 
+	 * @param args tut nichts
+	 */
 	public static void main(String[] args) {
 		logger.info("Starting the application!");
-		List<PolicyEntry> pList;
-		SNMPv2Reader read2 = new SNMPv2Reader("Firewall", new File("mib/NS-POLICY.mib"), "10.0.100.10", "5xHIT", "udp");
+		SNMPReader read2 = new SNMPv2Reader("Firewall", new File("mib/NS-POLICY.mib"), "10.0.100.10", "5xHIT", "udp");
 		logger.info("SNMPv2Reader generated");
-		
 		logger.info("Starting readMethod");
 		
 		for(List<String> list : read2.read()){
