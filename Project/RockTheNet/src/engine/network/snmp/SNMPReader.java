@@ -21,17 +21,19 @@ public interface SNMPReader extends PolicyReader {
 	 * Closes the SNMP
 	 */
 	public void close();
-	
+
 	/**
 	 * A Method which returns all policies OID's an its information
 	 */
 	public List<List<String>> read();
-	
+
 	/**
-	 * A Method which returns the current Bytes per second of an policy with the OID ending index
+	 * A Method which returns the current Bytes per second of an policy with the
+	 * OID ending index
 	 * 
-	 * @param index the ending of the OID
-	 * @return   The current bytes per second
+	 * @param index
+	 *            the ending of the OID
+	 * @return The current bytes per second
 	 */
 	public int getMonBytesSec(int index);
 }

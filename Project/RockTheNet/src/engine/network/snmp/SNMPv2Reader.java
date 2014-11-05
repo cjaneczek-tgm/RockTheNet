@@ -34,8 +34,9 @@ import net.percederberg.mibble.MibSymbol;
 import net.percederberg.mibble.MibValue;
 
 /**
- * A class which provides methods to connect to the firewall and read the firewall rules
- * with snmpv2
+ * A class which provides methods to connect to the firewall and read the
+ * firewall rules with snmpv2
+ * 
  * @author Wolfgang Mair
  * @version 2014-10-31
  */
@@ -45,7 +46,7 @@ public class SNMPv2Reader implements SNMPReader {
 
 	private String url;
 	private String textOID;
-	private String community;	
+	private String community;
 	private int snmpVersion = SnmpConstants.version2c;
 	private final String port = "161";
 	private String protocol = "udp";
@@ -57,11 +58,11 @@ public class SNMPv2Reader implements SNMPReader {
 	private List<String> policytypes = new LinkedList<String>();
 	private File mibfile;
 
-
 	/**
 	 * Constructor with parameters
 	 */
-	public SNMPv2Reader(String firewallname, File mibfile, String url, String community, String connectWith) {
+	public SNMPv2Reader(String firewallname, File mibfile, String url,
+			String community, String connectWith) {
 		this.community = community;
 		this.protocol = connectWith;
 		this.url = url;
@@ -75,12 +76,13 @@ public class SNMPv2Reader implements SNMPReader {
 	private void setup() {
 		try {
 			logger.info("Preparing the connection");
-			//Building the address to read
-			targetAddress = GenericAddress.parse(protocol + ":" + url + "/" + port);
+			// Building the address to read
+			targetAddress = GenericAddress.parse(protocol + ":" + url + "/"
+					+ port);
 			transport = new DefaultUdpTransportMapping();
 			snmp = new Snmp(transport);
-			
-			//generating the target
+
+			// generating the target
 			target = new CommunityTarget();
 			target.setCommunity(new OctetString(community));
 			target.setAddress(targetAddress);
@@ -88,11 +90,9 @@ public class SNMPv2Reader implements SNMPReader {
 			target.setTimeout(2000);
 			target.setVersion(snmpVersion);
 			treeUtils = new TreeUtils(snmp, new DefaultPDUFactory());
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			logger.error(e.getStackTrace().toString());
-		} 
-		catch (NullPointerException e) {
+		} catch (NullPointerException e) {
 			logger.error(e.getStackTrace().toString());
 		}
 	}
@@ -126,16 +126,19 @@ public class SNMPv2Reader implements SNMPReader {
 	}
 
 	/**
-	 * Return a List of TreeEvents which is read from the subtree of a OID with an max
+	 * Return a List of TreeEvents which is read from the subtree of a OID with
+	 * an max
 	 * 
-	 * @param tempoid The OID to get the subtree from
-	 * @param maxrep The amount of VariableBindings per TreeEvent
+	 * @param tempoid
+	 *            The OID to get the subtree from
+	 * @param maxrep
+	 *            The amount of VariableBindings per TreeEvent
 	 * @return a List of TreeEvents
 	 */
 	private List<TreeEvent> subtree(String tempoid, int maxrep) {
 		List<TreeEvent> subtree = null;
-		if(treeUtils != null && target != null) {
-			if(maxrep > 0)
+		if (treeUtils != null && target != null) {
+			if (maxrep > 0)
 				treeUtils.setMaxRepetitions(maxrep);
 			subtree = treeUtils.getSubtree(target, new OID(tempoid));
 			return subtree;
@@ -148,22 +151,29 @@ public class SNMPv2Reader implements SNMPReader {
 	/**
 	 * Counting the Policies
 	 * 
-	 * @param oid The Root-OID
+	 * @param oid
+	 *            The Root-OID
 	 * @return the count of Policies
 	 */
 	private int countPolicies(String oid) {
 		logger.info("Starting to count");
 		int count = 0;
 		List<TreeEvent> events = subtree(oid, -1);
-		if(events==null) {
+		if (events == null) {
 			logger.error("Subtree null");
 		} else {
-			for(TreeEvent event : events) {
+			for (TreeEvent event : events) {
 				if (event != null) {
-					if (event.isError()) {count = -1;}
+					if (event.isError()) {
+						count = -1;
+					}
 					VariableBinding[] values = event.getVariableBindings();
-					if (values == null) {count = -1;}
-					for (int i = 0; i < values.length; i++) {count++;}
+					if (values == null) {
+						count = -1;
+					}
+					for (int i = 0; i < values.length; i++) {
+						count++;
+					}
 				}
 			}
 		}
@@ -174,24 +184,24 @@ public class SNMPv2Reader implements SNMPReader {
 	/**
 	 * Reads all the Values we need for the policies
 	 * 
-	 * @return   A list with policy entries
+	 * @return A list with policy entries
 	 */
 	private List<PolicyEntry> getPolicyEntries() {
-		
+
 		logger.info("Starting to read the Policies");
-		
+
 		List<PolicyEntry> list = null;
 		setup();
 		open();
-		//Read from Settings PolicyId
+		// Read from Settings PolicyId
 		textOID = ".1.3.6.1.4.1.3224.10.1.1";
 		int maxrep = countPolicies(textOID);
 		int i = 0, k = 0;
 		list = new LinkedList<PolicyEntry>();
-		
-		//Read from Settings Policy
+
+		// Read from Settings Policy
 		textOID = ".1.3.6.1.4.1.3224.10.1.1.24";
-		for(TreeEvent event : subtree(textOID, maxrep)) {
+		for (TreeEvent event : subtree(textOID, maxrep)) {
 			if (event != null) {
 				if (event.isError()) {
 					logger.info(event.getErrorMessage());
@@ -199,19 +209,18 @@ public class SNMPv2Reader implements SNMPReader {
 				VariableBinding[] values = event.getVariableBindings();
 				if (values == null) {
 					logger.info("Values are null");
-				} 
-				else 
-					if (values.length == 0) {
+				} else if (values.length == 0) {
 					logger.info("No Values found");
 				}
 				PolicyEntry entry = null;
 				k = 0;
 				for (VariableBinding value : values) {
-					if(k == 0) {
+					if (k == 0) {
 						String tempoid = String.valueOf(value.getOid());
-						policytypes.add(tempoid.subSequence(0, tempoid.length()-4).toString());
+						policytypes.add(tempoid.subSequence(0,
+								tempoid.length() - 4).toString());
 					}
-					if(i==0) {
+					if (i == 0) {
 						entry = new PolicyEntry();
 						entry.setName(value.getVariable().toString());
 						entry.setCurrentOid(value.getOid().toString());
@@ -220,13 +229,15 @@ public class SNMPv2Reader implements SNMPReader {
 						entry = list.get(k);
 						entry.setName(value.getVariable().toString());
 						list.set(k, entry);
-					} k++;
-				} i++;
+					}
+					k++;
+				}
+				i++;
 			}
-		} 
-		
+		}
+
 		textOID = ".1.3.6.1.4.1.3224.10.1.1.3";
-		for(TreeEvent event : subtree(textOID, maxrep)) {
+		for (TreeEvent event : subtree(textOID, maxrep)) {
 			if (event != null) {
 				if (event.isError()) {
 					logger.info(event.getErrorMessage());
@@ -234,19 +245,18 @@ public class SNMPv2Reader implements SNMPReader {
 				VariableBinding[] values = event.getVariableBindings();
 				if (values == null) {
 					logger.info("Values are null");
-				} 
-				else 
-					if (values.length == 0) {
+				} else if (values.length == 0) {
 					logger.info("No Values found");
 				}
 				PolicyEntry entry = null;
 				k = 0;
 				for (VariableBinding value : values) {
-					if(k == 0) {
+					if (k == 0) {
 						String tempoid = String.valueOf(value.getOid());
-						policytypes.add(tempoid.subSequence(0, tempoid.length()-4).toString());
+						policytypes.add(tempoid.subSequence(0,
+								tempoid.length() - 4).toString());
 					}
-					if(i==0) {
+					if (i == 0) {
 						entry = new PolicyEntry();
 						entry.setZone(value.getVariable().toString());
 						entry.setCurrentOid(value.getOid().toString());
@@ -255,13 +265,15 @@ public class SNMPv2Reader implements SNMPReader {
 						entry = list.get(k);
 						entry.setZone(value.getVariable().toString());
 						list.set(k, entry);
-					} k++;
-				} i++;
+					}
+					k++;
+				}
+				i++;
 			}
-		} 
-		
+		}
+
 		textOID = ".1.3.6.1.4.1.3224.10.1.1.25";
-		for(TreeEvent event : subtree(textOID, maxrep)) {
+		for (TreeEvent event : subtree(textOID, maxrep)) {
 			if (event != null) {
 				if (event.isError()) {
 					logger.info(event.getErrorMessage());
@@ -269,19 +281,18 @@ public class SNMPv2Reader implements SNMPReader {
 				VariableBinding[] values = event.getVariableBindings();
 				if (values == null) {
 					logger.info("Values are null");
-				} 
-				else 
-					if (values.length == 0) {
+				} else if (values.length == 0) {
 					logger.info("No Values found");
 				}
 				PolicyEntry entry = null;
 				k = 0;
 				for (VariableBinding value : values) {
-					if(k == 0) {
+					if (k == 0) {
 						String tempoid = String.valueOf(value.getOid());
-						policytypes.add(tempoid.subSequence(0, tempoid.length()-4).toString());
+						policytypes.add(tempoid.subSequence(0,
+								tempoid.length() - 4).toString());
 					}
-					if(i==0) {
+					if (i == 0) {
 						entry = new PolicyEntry();
 						entry.setService(value.getVariable().toString());
 						entry.setCurrentOid(value.getOid().toString());
@@ -290,65 +301,65 @@ public class SNMPv2Reader implements SNMPReader {
 						entry = list.get(k);
 						entry.setService(value.getVariable().toString());
 						list.set(k, entry);
-					} k++;
-				} i++;
+					}
+					k++;
+				}
+				i++;
 			}
-		} 
+		}
 		close();
 		logger.info("Finished reading the Policies");
 		return list;
-	} 
+	}
 
 	/**
 	 * A Method which reads the bytes per second of an OID
 	 * 
-	 * @param index The last specifing OID-branch number of the policy
-	 * @return   The bytes per second
+	 * @param index
+	 *            The last specifing OID-branch number of the policy
+	 * @return The bytes per second
 	 */
 	@Override
 	public synchronized int getMonBytesSec(int index) {
 		int value = 0;
-		//Preparing connection
+		// Preparing connection
 		setup();
-		//Listening to connection
+		// Listening to connection
 		open();
-		
-		//Read from Settings PolicyId
-		textOID = ".1.3.6.1.4.1.3224.10.2.1.6."+index+".0";
+
+		// Read from Settings PolicyId
+		textOID = ".1.3.6.1.4.1.3224.10.2.1.6." + index + ".0";
 		PDU pdu = new PDU();
 		pdu.addOID(new VariableBinding(new OID(textOID)));
 		pdu.setType(PDU.GET);
 		pdu.setMaxRepetitions(5);
 		ResponseEvent response;
-		
+
 		try {
 			response = snmp.send(pdu, target);
 			PDU pduresponse = response.getResponse();
-			for(VariableBinding vb : pduresponse.getVariableBindings()) {
+			for (VariableBinding vb : pduresponse.getVariableBindings()) {
 				value = vb.getVariable().toInt();
 			}
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
-		
+
 		close();
 		return value;
 	}
 
-
-
 	/**
 	 * A Method which returns a list with all Policytypes of a certain
 	 * 
-	 * @return   Eine Liste mit den OIDs der Policytypen
+	 * @return Eine Liste mit den OIDs der Policytypen
 	 */
-	private List<String> getPolicyTypes(){
+	private List<String> getPolicyTypes() {
 		Mib mib = this.loadMib(mibfile);
 		ArrayList<String> list = new ArrayList<String>();
-		Iterator   iter = mib.getAllSymbols().iterator();
-		MibSymbol  symbol;
-		MibValue   value;
+		Iterator iter = mib.getAllSymbols().iterator();
+		MibSymbol symbol;
+		MibValue value;
 
 		while (iter.hasNext()) {
 			symbol = (MibSymbol) iter.next();
@@ -358,44 +369,44 @@ public class SNMPv2Reader implements SNMPReader {
 		return list;
 	}
 
-
 	/**
-	 * A Method which loads a Mib File and returns a Mib Object
-	 * which can be used to read the table and the values of the table
+	 * A Method which loads a Mib File and returns a Mib Object which can be
+	 * used to read the table and the values of the table
 	 * 
-	 * @param file A File Object which contains the path of the mibFile
-	 * @return   A Mib Object which contains useful methods for snmp
+	 * @param file
+	 *            A File Object which contains the path of the mibFile
+	 * @return A Mib Object which contains useful methods for snmp
 	 */
-	private Mib loadMib(File file){
+	private Mib loadMib(File file) {
 
-		MibLoader  loader = new MibLoader();
+		MibLoader loader = new MibLoader();
 
 		loader.addDir(file.getParentFile());
 		try {
-			return loader.load(file); 
-		} catch ( MibLoaderException e) {
+			return loader.load(file);
+		} catch (MibLoaderException e) {
 			e.printStackTrace();
-		}
-		catch ( FileNotFoundException e) {
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
 	/**
-	 * A Method which returns a double List collection in order to generate a Table
-	 * Each List is a Policy entry with the data: OID,name,zone,service in String form
+	 * A Method which returns a double List collection in order to generate a
+	 * Table Each List is a Policy entry with the data: OID,name,zone,service in
+	 * String form
 	 * 
-	 * @return   A List with another list inside which contains Strings (Policy info) 
+	 * @return A List with another list inside which contains Strings (Policy
+	 *         info)
 	 */
 	@Override
 	public List<List<String>> read() {
 		List<List<String>> list = new ArrayList<List<String>>();
-		
-		for(PolicyEntry entry : this.getPolicyEntries()){
+
+		for (PolicyEntry entry : this.getPolicyEntries()) {
 			list.add(entry.getList());
 		}
 		return list;

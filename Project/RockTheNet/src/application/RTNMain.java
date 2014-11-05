@@ -1,13 +1,7 @@
 package application;
 
-import java.io.File;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 
-import engine.network.snmp.SNMPReader;
-import engine.network.snmp.SNMPv2Reader;
-import engine.network.snmp.SNMPv3Reader;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -40,23 +34,12 @@ public class RTNMain extends Application {
 	}
 
 	/**
-	 * Die main die einen SNMPv2Reader startet und die GUI ausführt
+	 * Main-method, which starts the GUI
 	 * 
-	 * @param args tut nichts
+	 * @param args
 	 */
 	public static void main(String[] args) {
 		logger.info("Starting the application!");
-		SNMPReader read2 = new SNMPv2Reader("Firewall", new File("mib/NS-POLICY.mib"), "10.0.100.10", "5xHIT", "udp");
-		logger.info("SNMPv2Reader generated");
-		logger.info("Starting readMethod");
-		
-		for(List<String> list : read2.read()){
-			for(String value : list){
-				System.out.print(value+", ");
-			}
-			System.out.println();
-		}
-		
 		launch(args);
 		logger.info("The application was terminated/closed! Bye Bye");
 	}

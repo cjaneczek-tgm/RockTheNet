@@ -41,8 +41,7 @@ public class SSHReader implements PolicyReader {
 		// etc.
 		// They had no documentation at all
 
-		try
-		{
+		try {
 			/* Create a connection instance */
 
 			Connection conn = new Connection(hostname);
@@ -51,13 +50,14 @@ public class SSHReader implements PolicyReader {
 
 			conn.connect();
 
-			/* Authenticate.
-			 * If you get an IOException saying something like
+			/*
+			 * Authenticate. If you get an IOException saying something like
 			 * "Authentication method password not supported by the server at this stage."
 			 * then please check the FAQ.
 			 */
 
-			boolean isAuthenticated = conn.authenticateWithPassword(username, password);
+			boolean isAuthenticated = conn.authenticateWithPassword(username,
+					password);
 
 			if (isAuthenticated == false)
 				throw new IOException("Authentication failed.");
@@ -68,19 +68,20 @@ public class SSHReader implements PolicyReader {
 
 			sess.execCommand("get policy all");
 
-			System.out.println("Here is some information about the remote host:");
+			System.out
+					.println("Here is some information about the remote host:");
 
-			/* 
-			 * This basic example does not handle stderr, which is sometimes dangerous
-			 * (please read the FAQ).
+			/*
+			 * This basic example does not handle stderr, which is sometimes
+			 * dangerous (please read the FAQ).
 			 */
 
 			InputStream stdout = new StreamGobbler(sess.getStdout());
 
-			BufferedReader br = new BufferedReader(new InputStreamReader(stdout));
+			BufferedReader br = new BufferedReader(
+					new InputStreamReader(stdout));
 
-			while (true)
-			{
+			while (true) {
 				String line = br.readLine();
 				if (line == null)
 					break;
@@ -99,9 +100,7 @@ public class SSHReader implements PolicyReader {
 
 			conn.close();
 
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace(System.err);
 			System.exit(2);
 		}

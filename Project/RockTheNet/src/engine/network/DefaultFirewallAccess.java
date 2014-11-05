@@ -3,8 +3,9 @@ package engine.network;
 import java.util.List;
 
 /**
- * This is the default FirewallAccess (basically the normal implementation)
- * For more details look up the interface-documentation
+ * This is the default FirewallAccess (basically the normal implementation) For
+ * more details look up the interface-documentation
+ * 
  * @see engine.network.FirewallAccess
  * @version 2014-10-23
  */

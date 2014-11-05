@@ -3,8 +3,9 @@ package engine.network;
 import java.util.List;
 
 /**
- * This is the FirewallAccess.
- * It is used to access the readers and writers of the Firewall
+ * This is the FirewallAccess. It is used to access the readers and writers of
+ * the Firewall
+ * 
  * @author Adrian Bergler
  * @version 2014-10-23
  */

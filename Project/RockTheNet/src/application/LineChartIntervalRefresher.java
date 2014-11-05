@@ -1,50 +1,37 @@
 package application;
 
-import javafx.scene.chart.XYChart;
 import controller.RTNController;
 
+/**
+ * 
+ * @author Osman Oezsoy
+ * @version 2014-10-30
+ */
 public class LineChartIntervalRefresher implements Runnable {
 
 	private int sleepTime;
 	private int sec;
-	private boolean byteSelected;
-	private boolean kiloByteSelected;
-	private boolean megaByteSelected;
 	private RTNController rtnc;
-		
-	public LineChartIntervalRefresher(RTNController rtnc) {
-		this.sleepTime = 1000;
-		this.sec = 0;
-		this.byteSelected = true;
-		this.rtnc = rtnc;
-	}
+	private int index;
 
 	/**
 	 * 
+	 * @param rtnc
 	 */
+	public LineChartIntervalRefresher(RTNController rtnc) {
+		this.sleepTime = 1000;
+		this.sec = 0;
+		this.index = 57;
+		this.rtnc = rtnc;
+	}
+
 	@Override
 	public void run() {
 		try {
 			while (true) {
 				Thread.sleep(this.sleepTime);
-				
-				if (this.byteSelected) {
-					// populating the series with data
-					this.rtnc.getSeries().getData().remove(0);
-					this.rtnc.getSeries().getData().add(new XYChart.Data(this.sec, 80));
-				} else {
-					if (this.kiloByteSelected) {
-						this.rtnc.getSeries().getData().remove(0);
-						this.rtnc.getSeries().getData().add(new XYChart.Data(this.sec, 30));
-					} else {
-						if (this.megaByteSelected) {
-							this.rtnc.getSeries().getData().remove(0);
-							this.rtnc.getSeries().getData().add(new XYChart.Data(this.sec, 40));
-						}
-					}
-				}
-				
-				this.rtnc.getLineChart().getData().add(this.rtnc.getSeries());
+				this.rtnc.refreshLineChart(this.sec, this.rtnc.getRead2()
+						.getMonBytesSec(this.index));
 				this.sec++;
 			}
 		} catch (Exception e) {
@@ -53,18 +40,10 @@ public class LineChartIntervalRefresher implements Runnable {
 		}
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	public int getSleepTime() {
 		return sleepTime;
 	}
 
-	/**
-	 * 
-	 * @param sleepTime
-	 */
 	public void setSleepTime(int sleepTime) {
 		this.sleepTime = sleepTime;
 	}
@@ -77,27 +56,11 @@ public class LineChartIntervalRefresher implements Runnable {
 		this.sec = sec;
 	}
 
-	public boolean isByteSelected() {
-		return byteSelected;
+	public int getIndex() {
+		return index;
 	}
 
-	public void setByteSelected(boolean byteSelected) {
-		this.byteSelected = byteSelected;
-	}
-
-	public boolean isKiloByteSelected() {
-		return kiloByteSelected;
-	}
-
-	public void setKiloByteSelected(boolean kiloByteSelected) {
-		this.kiloByteSelected = kiloByteSelected;
-	}
-
-	public boolean isMegaByteSelected() {
-		return megaByteSelected;
-	}
-
-	public void setMegaByteSelected(boolean megaByteSelected) {
-		this.megaByteSelected = megaByteSelected;
+	public void setIndex(int index) {
+		this.index = index;
 	}
 }

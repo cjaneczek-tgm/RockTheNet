@@ -12,6 +12,7 @@ import engine.network.OIDProps;
 
 /**
  * Tests the OIDProperties
+ * 
  * @author Adrian Bergler
  * @version 2014-10-31
  */
@@ -24,18 +25,18 @@ public class TestOIDProps {
 	public void testInit() throws IOException {
 		OIDProps oidp = OIDProps.get();
 		assertTrue(oidp != null);
-		
+
 		oidp.close();
 	}
 
 	@Test
-	public void testLoad() throws IOException{
+	public void testLoad() throws IOException {
 		OIDProps oidp = OIDProps.get();
 
 		String testoid = oidp.getProperty("test");
-		
+
 		assertEquals(".1.2.3.4.5.6.7.8.9", testoid);
 		oidp.close();
 	}
-	
+
 }
