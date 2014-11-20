@@ -19,5 +19,6 @@
 	<classpathentry kind="lib" path="lib/sshj-0.8.1-javadoc.jar"/>
 	<classpathentry kind="lib" path="lib/sshj-0.8.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/sshj-0.8.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Osman/Desktop/Osman/Software-Programme/Eclipse Kepler für JavaFx/workspace-javafx/RockTheNet/lib/jfxrt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

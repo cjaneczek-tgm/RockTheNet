@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Autoren: 	Osman Oezsoy 		<ooezsoy@student.tgm.ac.at>
+				Christian Bobek 	<cbobek@student.tgm.ac.at>
+-->
+<project name="RockTheNet" default="compile" basedir=".">
+	
+	<!-- 
+	Variablen, die die Pfade enthalten src.dir = src ....
+	-->
+	<property name="src.dir" value="src"/>
+	<property name="build.dir" value="build"/>
+	<property name="lib.dir" value="lib"/>
+	<property name="doc.dir" value="doc"/>
+	<property name="test.dir" value="test"/>
+	<property name="jar.dir" value="bin/jar"/>
+	<property name="classes.dir" value="${build.dir}/classes"/>
+	<property name="bin.dir" value="bin"/>
+	
+	<!-- Name der Klasse mit der main-Methode -->
+    <property name="main-class"  value="application.RTNMain"/>
+
+	<!-- Pfad zu den externen Jar Files, die fuer das Projekt notwendig sind -->
+	<path id="classpath">
+        <fileset dir="${lib.dir}" includes="*.jar"/>
+    </path>
+	
+	<path id="application" location="${jar.dir}/${ant.project.name}.jar"/>
+	
+	<!-- Loescht folgende Ordner: build, doc und bin -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+		<delete dir="${doc.dir}"/>
+		<delete dir="${bin.dir}"/>
+    </target>
+	
+	<!-- Erzeugt JavaDoc aus den Source-Files -->
+	<target name="doc">
+		<javadoc sourcepath="${src.dir}" destdir="${doc.dir}" classpathref="classpath" />
+	</target>
+	
+	<!-- Kompeliert alle Dateien, die im Source-Ordner enthalten sind -->
+	 <target name="compile">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath"/>
+    </target>
+	
+	<!-- Erstellt ein Jar-File -->
+    <target name="jar" depends="compile, doc">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="application.RTNMain"/>
+            </manifest>
+			<fileset dir="${src.dir}" />
+			<fileset dir="${doc.dir}"/>
+        </jar>
+    </target>
+	
+	<!-- Fuehrt ein Jar-File aus -->
+	<target name="run" depends="jar">
+		<java jar="${jar.dir}/${ant.project.name}.jar" fork="true"/>
+	</target>
+	
+	<!-- Fuehrt die JUnit-Testklassen aus und speichert die Ergebisse in XML files -->
+	<target name="junit-test" depends="jar">
+		<mkdir dir="${test.dir}"/>
+		<junit printsummary="yes">
+		<classpath>
+			<path refid="classpath"/>
+			<path refid="application"/>
+		</classpath>
+		<formatter type="xml"/>
+		<batchtest fork="yes" todir="${test.dir}">
+			<fileset dir="${src.dir}" includes="*Test.java"/>
+		</batchtest>
+		</junit>
+	</target>
+	
+	<!-- Erstellt aus den XML-Files ein HTML Report -->
+	<target name="test" depends="junit-test">
+		<junitreport todir="${test.dir}">
+			<fileset dir="${test.dir}" includes="TEST-*.xml"/>
+			<report todir="${test.dir}"/>
+		</junitreport>
+	</target>
+	
+</project>
