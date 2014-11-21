@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import application.Koordinaten;
 import engine.network.OIDProps;
 
 /**
@@ -29,14 +30,13 @@ public class TestOIDProps {
 		oidp.close();
 	}
 
+	/**
+	 * Test the coordinates class
+	 */
 	@Test
-	public void testLoad() throws IOException {
-		OIDProps oidp = OIDProps.get();
-
-		String testoid = oidp.getProperty("test");
-
-		assertEquals(".1.2.3.4.5.6.7.8.9", testoid);
-		oidp.close();
+	public void testCoordinates() throws IOException {
+		Koordinaten k = new Koordinaten(5, 11.0);
+		
+		assertEquals(5, k.getX());
 	}
-
 }

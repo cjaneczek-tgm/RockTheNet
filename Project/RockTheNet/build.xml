@@ -18,7 +18,7 @@
 	<property name="bin.dir" value="bin"/>
 	
 	<!-- Name der Klasse mit der main-Methode -->
-    <property name="main-class"  value="application.RTNMain"/>
+    <property name="main-class"  value="src.application.RTNMain"/>
 
 	<!-- Pfad zu den externen Jar Files, die fuer das Projekt notwendig sind -->
 	<path id="classpath">
@@ -27,11 +27,12 @@
 	
 	<path id="application" location="${jar.dir}/${ant.project.name}.jar"/>
 	
-	<!-- Loescht folgende Ordner: build, doc und bin -->
+	<!-- Loescht folgende Ordner: build, doc, bin und test -->
     <target name="clean">
         <delete dir="${build.dir}"/>
 		<delete dir="${doc.dir}"/>
 		<delete dir="${bin.dir}"/>
+		<delete dir="${test.dir}"/>
     </target>
 	
 	<!-- Erzeugt JavaDoc aus den Source-Files -->
@@ -65,16 +66,18 @@
 	<!-- Fuehrt die JUnit-Testklassen aus und speichert die Ergebisse in XML files -->
 	<target name="junit-test" depends="jar">
 		<mkdir dir="${test.dir}"/>
-		<junit printsummary="yes">
-		<classpath>
+		<junit fork="true" printsummary="yes" haltonfailure="${haltonfailure}">
+	    <classpath>
 			<path refid="classpath"/>
 			<path refid="application"/>
 		</classpath>
-		<formatter type="xml"/>
-		<batchtest fork="yes" todir="${test.dir}">
-			<fileset dir="${src.dir}" includes="*Test.java"/>
-		</batchtest>
-		</junit>
+	    <formatter type="xml"/>
+	    <batchtest fork="yes" todir="${test.dir}">
+		<fileset dir="${src.dir}">
+		    <include name="**/*Test.java"/>
+		</fileset>
+	    </batchtest>
+	</junit>
 	</target>
 	
 	<!-- Erstellt aus den XML-Files ein HTML Report -->
