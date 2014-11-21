@@ -3,7 +3,7 @@
 	Autoren: 	Osman Oezsoy 		<ooezsoy@student.tgm.ac.at>
 				Christian Bobek 	<cbobek@student.tgm.ac.at>
 -->
-<project name="RockTheNet" default="compile" basedir=".">
+<project name="RockTheNet" default="compile" basedir="." xmlns:jacoco="antlib:org.jacoco.ant">
 	
 	<!-- 
 	Variablen, die die Pfade enthalten src.dir = src ....
@@ -24,6 +24,10 @@
 	<path id="classpath">
         <fileset dir="${lib.dir}" includes="*.jar"/>
     </path>
+	
+	<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+		<classpath path="lib/jacocoant.jar"/>
+	</taskdef>
 	
 	<path id="application" location="${jar.dir}/${ant.project.name}.jar"/>
 	
@@ -66,18 +70,20 @@
 	<!-- Fuehrt die JUnit-Testklassen aus und speichert die Ergebisse in XML files -->
 	<target name="junit-test" depends="jar">
 		<mkdir dir="${test.dir}"/>
-		<junit fork="true" printsummary="yes" haltonfailure="${haltonfailure}">
-	    <classpath>
-			<path refid="classpath"/>
-			<path refid="application"/>
-		</classpath>
-	    <formatter type="xml"/>
-	    <batchtest fork="yes" todir="${test.dir}">
-		<fileset dir="${src.dir}">
-		    <include name="**/*Test.java"/>
-		</fileset>
-	    </batchtest>
-	</junit>
+		<jacoco:coverage>	
+			<junit fork="true" printsummary="yes" haltonfailure="${haltonfailure}">
+			<classpath>
+				<path refid="classpath"/>
+				<path refid="application"/>
+			</classpath>
+			<formatter type="xml"/>
+			<batchtest fork="yes" todir="${test.dir}">
+			<fileset dir="${src.dir}">
+				<include name="**/*Test.java"/>
+			</fileset>
+			</batchtest>
+			</junit>
+		</jacoco:coverage>
 	</target>
 	
 	<!-- Erstellt aus den XML-Files ein HTML Report -->
