@@ -17,7 +17,7 @@ import engine.network.OIDProps;
  * @author Adrian Bergler
  * @version 2014-10-31
  */
-public class TestOIDProps {
+public class OIDPropsTest {
 
 	/**
 	 * Checks if any exceptions are thrown
